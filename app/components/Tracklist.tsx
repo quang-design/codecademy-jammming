@@ -29,7 +29,7 @@ export default function Tracklist({
           />
         ))
       ) : (
-        <p className="text-purple-200 text-center">No tracks available</p>
+        <p className="text-purple-200">No tracks available</p>
       )}
     </div>
   );

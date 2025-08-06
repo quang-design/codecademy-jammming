@@ -1,14 +1,33 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Button from "./Button";
 
-export default function SearchBar() {
-  const [searchQuery, setSearchQuery] = useState("");
+interface SearchBarProps {
+  onSearch: (query: string) => void;
+}
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(searchQuery);
-  };
+export default function SearchBar({ onSearch }: SearchBarProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleTermChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(event.target.value);
+    },
+    []
+  );
+
+  const handleSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      setLoading(true);
+      onSearch(searchQuery);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    },
+    [searchQuery, onSearch]
+  );
 
   return (
     <form
@@ -21,10 +40,12 @@ export default function SearchBar() {
         placeholder="Enter a song title"
         value={searchQuery}
         className="p-4 border border-gray-300 rounded-full bg-white/90 text-black"
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={(e) => {
+          handleTermChange(e);
+        }}
       />
       <Button aria-label="Search for song" className="w-full">
-        Search
+        {loading ? "Searching..." : "Search"}
       </Button>
     </form>
   );

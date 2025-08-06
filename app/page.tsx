@@ -1,40 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import SearchBar from "./components/SearchBar";
 import SearchResult from "./components/SearchResult";
 import Playlist from "./components/Playlist";
 import { TrackProps } from "./components/Track";
 
-const searchResultsMock: TrackProps[] = [
-  {
-    id: "1",
-    cover: "https://i.pravatar.cc/150?u=1",
-    title: "Track 1",
-    artist: "Artist 1",
-  },
-  {
-    id: "2",
-    cover: "https://i.pravatar.cc/150?u=2",
-    title: "Track 2",
-    artist: "Artist 2",
-  },
-];
-
-const playlistTracksMock: TrackProps[] = [
-  {
-    id: "3",
-    cover: "https://i.pravatar.cc/150?u=3",
-    title: "Track 3",
-    artist: "Artist 3",
-  },
-];
-
 export default function Home() {
-  const [searchResults, setSearchResults] =
-    useState<TrackProps[]>(searchResultsMock);
-  const [playlistTracks, setPlaylistTracks] =
-    useState<TrackProps[]>(playlistTracksMock);
+  const [searchResults, setSearchResults] = useState<TrackProps[]>([]);
+  const [playlistTracks, setPlaylistTracks] = useState<TrackProps[]>([]);
 
   const addTrack = (track: TrackProps) => {
     setSearchResults(searchResults.filter((t) => t.id !== track.id));
@@ -46,13 +20,29 @@ export default function Home() {
     setSearchResults([...searchResults, track]);
   };
 
+  const search = useCallback(async (term: string) => {
+    try {
+      const response = await fetch(
+        `/api/spotify?query=${encodeURIComponent(term)}`
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setSearchResults(data.tracks);
+      } else {
+        console.error("API error:", data.error);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  }, []);
+
   return (
     <main
       className="bg-cover bg-center bg-no-repeat min-h-screen text-white p-4"
       style={{ backgroundImage: "url(/background_photo_desktop.jpg)" }}
     >
       <section id="search" className="flex items-center justify-center py-12">
-        <SearchBar />
+        <SearchBar onSearch={search} />
       </section>
       <section
         id="result"

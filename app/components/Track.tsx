@@ -40,14 +40,14 @@ export default function Track({
 
       {onAdd ? (
         <button
-          className="cursor-pointer size-8 rounded-full border border-purple-800 bg-white/10 text-white/60 hover:bg-white/20 hover:text-white/80 transition-colors duration-200"
+          className="cursor-pointer size-8 rounded-full border border-purple-800 bg-white/10 text-white/60 hover:bg-white/20 hover:text-white/80 transition-colors duration-200 aspect-square"
           onClick={onAdd}
         >
           +
         </button>
       ) : onRemove ? (
         <button
-          className="cursor-pointer size-8 rounded-full border border-purple-800 bg-white/10 text-white/60 hover:bg-white/20 hover:text-white/80 transition-colors duration-200"
+          className="cursor-pointer size-8 rounded-full border border-purple-800 bg-white/10 text-white/60 hover:bg-white/20 hover:text-white/80 transition-colors duration-200 aspect-square"
           onClick={onRemove}
         >
           -
