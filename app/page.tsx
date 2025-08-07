@@ -24,7 +24,7 @@ export default function Home() {
   const search = useCallback(async (term: string) => {
     try {
       const response = await fetch(
-        `/api/spotify?query=${encodeURIComponent(term)}`
+        `/api/spotify/search?query=${encodeURIComponent(term)}`
       );
       const data = await response.json();
       if (response.ok) {

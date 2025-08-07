@@ -1,4 +1,4 @@
-import { getSpotifyTrack } from "@/app/lib/spotify";
+import spotify from "@/app/lib/spotify";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const tracks = await getSpotifyTrack(query);
+    const tracks = await spotify.searchTracks(query);
     return NextResponse.json({ tracks });
   } catch (error: unknown) {
     console.error("Spotify API error:", error);
