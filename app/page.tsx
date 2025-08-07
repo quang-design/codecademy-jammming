@@ -22,24 +22,21 @@ export default function Home() {
   };
 
   const search = useCallback(async (term: string) => {
-    try {
-      const response = await fetch(
-        `/api/spotify/search?query=${encodeURIComponent(term)}`
-      );
-      const data = await response.json();
-      if (response.ok) {
-        setSearchResults(data.tracks);
-      } else {
-        console.error("API error:", data.error);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
+    const response = await fetch(
+      `/api/spotify/search?query=${encodeURIComponent(term)}`
+    );
+    const data = await response.json();
+
+    if (response.ok) {
+      setSearchResults(data.tracks);
+    } else {
+      console.error("API error:", data.error);
     }
   }, []);
 
   return (
     <main
-      className="bg-cover bg-center bg-no-repeat min-h-screen text-white p-4"
+      className="bg-cover bg-center bg-no-repeat min-h-screen text-white p-4 pt-16"
       style={{ backgroundImage: "url(/background_photo_desktop.jpg)" }}
     >
       <section id="search" className="flex items-center justify-center py-12">

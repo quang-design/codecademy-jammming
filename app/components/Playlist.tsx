@@ -35,8 +35,16 @@ export default function Playlist({
     }
   }
 
-  function savePlaylist() {
+  async function savePlaylist() {
     console.log("Saving playlist...");
+    const response = await fetch(`/api/spotify/user`);
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log(data);
+    } else {
+      console.error("API error:", data.error);
+    }
   }
 
   return (
