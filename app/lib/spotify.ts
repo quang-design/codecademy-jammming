@@ -69,3 +69,22 @@ export const getSpotifyTrack = async (query: string) => {
     throw error;
   }
 };
+
+export const getCurrentUserProfile = async () => {
+  const accessToken = await getSpotifyAccessToken();
+
+  try {
+    const response = await fetch(`https://api.spotify.com/v1/me`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error getting current user profile:", error);
+    throw error;
+  }
+};

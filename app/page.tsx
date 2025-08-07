@@ -9,6 +9,7 @@ import { TrackProps } from "./components/Track";
 export default function Home() {
   const [searchResults, setSearchResults] = useState<TrackProps[]>([]);
   const [playlistTracks, setPlaylistTracks] = useState<TrackProps[]>([]);
+  const [playlistName, setPlaylistName] = useState("");
 
   const addTrack = (track: TrackProps) => {
     setSearchResults(searchResults.filter((t) => t.id !== track.id));
@@ -49,7 +50,12 @@ export default function Home() {
         className="grid grid-cols-1 sm:grid-cols-2 min-h-[calc(100vh-20rem)] gap-4"
       >
         <SearchResult results={searchResults} addTrack={addTrack} />
-        <Playlist tracks={playlistTracks} removeTrack={removeTrack} />
+        <Playlist
+          tracks={playlistTracks}
+          removeTrack={removeTrack}
+          playlistName={playlistName}
+          setPlaylistName={setPlaylistName}
+        />
       </section>
     </main>
   );
