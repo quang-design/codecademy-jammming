@@ -1,3 +1,6 @@
+import { SearchContent, Track } from "spotify-types";
+import type { TrackProps } from "../components/Track";
+
 let accessToken: string | null = null;
 let tokenExpirationTime: number | null = null;
 
@@ -23,7 +26,8 @@ export const getSpotifyAccessToken = async () => {
       body: `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`,
     });
 
-    const data = await response.json();
+    const data: { access_token: string; expires_in: number } =
+      await response.json();
     accessToken = data.access_token;
     tokenExpirationTime = Date.now() + data.expires_in * 1000;
 
@@ -47,11 +51,11 @@ export const getSpotifyTrack = async (query: string) => {
       }
     );
 
-    const data = await response.json();
+    const data: SearchContent = await response.json();
 
-    const tracks = data.tracks.items;
+    const tracks: Track[] = data?.tracks?.items || [];
 
-    const parsedTracks = tracks.map((track) => ({
+    const parsedTracks: TrackProps[] = tracks.map((track) => ({
       id: track.id,
       cover: track.album.images[0].url,
       title: track.name,
