@@ -1,6 +1,13 @@
 import { SearchContent, Track } from "spotify-types";
 import type { TrackProps } from "../components/Track";
 
+const generateRandomString = (length: number) => {
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const values = crypto.getRandomValues(new Uint8Array(length));
+  return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+};
+
 class Spotify {
   private accessToken: string | null = null;
   private tokenExpirationTime: number | null = null;
@@ -17,6 +24,10 @@ class Spotify {
 
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      throw new Error("Missing Spotify credentials");
+    }
 
     try {
       const response = await fetch("https://accounts.spotify.com/api/token", {

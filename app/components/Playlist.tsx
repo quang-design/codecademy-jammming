@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Button from "./Button";
 import { TrackProps } from "./Track";
 import Tracklist from "./Tracklist";
@@ -20,6 +21,7 @@ export default function Playlist({
 }: PlaylistProps) {
   const [isEditing, setIsEditing] = useState(false);
   const h2Ref = useRef<HTMLHeadingElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (isEditing && h2Ref.current) {
@@ -36,15 +38,8 @@ export default function Playlist({
   }
 
   async function savePlaylist() {
-    console.log("Saving playlist...");
-    const response = await fetch(`/api/spotify/user`);
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log(data);
-    } else {
-      console.error("API error:", data.error);
-    }
+    console.log("Start saving playlist...");
+    router.push("/api/spotify/login");
   }
 
   return (
