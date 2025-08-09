@@ -28,7 +28,7 @@ export async function GET() {
   const codeChallenge = base64encode(hashed);
 
   const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const redirectUri = "process.env.SPOTIFY_REDIRECT_URI";
+  const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
 
   if (!clientId || !redirectUri) {
     return NextResponse.json(
