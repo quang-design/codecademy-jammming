@@ -40,12 +40,22 @@ export default function Playlist({
   async function savePlaylist() {
     console.log("Start saving playlist...");
 
+    // Debug: Log all cookies
+    console.log("All cookies:", document.cookie);
+
     const accessToken = document.cookie
       .split("; ")
       .find((row) => row.startsWith("spotify_access_token="))
       ?.split("=")[1];
 
-    if (!accessToken) {
+    console.log("Raw access token:", accessToken);
+
+    // URL decode the token if it exists
+    const decodedToken = accessToken ? decodeURIComponent(accessToken) : null;
+    console.log("Decoded access token:", decodedToken);
+
+    if (!decodedToken) {
+      console.log("No access token found, redirecting to login");
       router.push("/api/spotify/login");
       return;
     }
@@ -62,6 +72,8 @@ export default function Playlist({
       });
 
       const data = await response.json();
+
+      console.log("Response:", data);
 
       if (response.ok) {
         console.log("Playlist saved successfully:", data.playlistId);
