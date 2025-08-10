@@ -3,7 +3,6 @@ import spotify from "@/app/lib/spotify";
 
 export async function POST(request: NextRequest) {
   try {
-    // Extract credentials from httpOnly cookies (server-side for security)
     const accessToken = request.cookies.get("spotify_access_token")?.value;
     const userId = request.cookies.get("user_id")?.value;
 
