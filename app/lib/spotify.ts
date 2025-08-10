@@ -12,6 +12,7 @@ class Spotify {
 
   public setAccessToken(accessToken: string) {
     this.accessToken = accessToken;
+    this.tokenExpirationTime = Date.now() + 60 * 60 * 1000;
   }
 
   public async getAccessToken() {
