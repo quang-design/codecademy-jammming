@@ -113,9 +113,23 @@ class Spotify {
         }
       );
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Spotify API error creating playlist:", errorData);
+        throw new Error(
+          `Failed to create playlist: ${response.status} ${response.statusText}`
+        );
+      }
+
       const data = await response.json();
-      const playlistId = data.id;
-      return playlistId;
+      console.log("Playlist creation response:", data);
+
+      if (!data.id) {
+        console.error("No playlist ID in response:", data);
+        throw new Error("No playlist ID returned from Spotify API");
+      }
+
+      return data.id;
     } catch (error) {
       console.error("Error creating playlist:", error);
       throw error;
@@ -139,8 +153,23 @@ class Spotify {
         }
       );
 
-      const { snapshot_id } = await response.json();
-      return { snapshot_id };
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Spotify API error adding tracks:", errorData);
+        throw new Error(
+          `Failed to add tracks: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("Add tracks response:", data);
+
+      if (!data.snapshot_id) {
+        console.error("No snapshot_id in response:", data);
+        throw new Error("No snapshot_id returned from Spotify API");
+      }
+
+      return { snapshot_id: data.snapshot_id };
     } catch (error) {
       console.error("Error adding items to playlist:", error);
       throw error;
