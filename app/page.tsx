@@ -44,7 +44,7 @@ export default function Home() {
       (t) => t.id !== track.id
     );
     setPlaylistTracks(updatedPlaylistTracks);
-    setSearchResults([...searchResults, track]);
+    // setSearchResults([...searchResults, track]);
     localStorage.setItem(
       "playlistTracks",
       JSON.stringify(updatedPlaylistTracks)
