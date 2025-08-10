@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Missing code" }, { status: 400 });
   }
 
-  const user = await spotify.getCurrentUserProfile(code);
+  const user = await spotify.getCurrentUserProfile();
 
   console.log(user);
 

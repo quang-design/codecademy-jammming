@@ -80,11 +80,11 @@ class Spotify {
     }
   }
 
-  public async getCurrentUserProfile(code: string) {
+  public async getCurrentUserProfile() {
     try {
       const response = await fetch(`https://api.spotify.com/v1/me`, {
         headers: {
-          Authorization: `Bearer ${code}`,
+          Authorization: `Bearer ${this.accessToken}`,
         },
       });
 

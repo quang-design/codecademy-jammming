@@ -46,7 +46,7 @@ export default function Playlist({
       .split(";")
       .find((cookie) => cookie.trim().startsWith("spotify_access_token="))
       ?.split("=")[1];
-
+    console.log(accessToken);
     if (!accessToken) {
       router.push("/api/spotify/login");
       return;
@@ -56,7 +56,7 @@ export default function Playlist({
       .split(";")
       .find((cookie) => cookie.trim().startsWith("user_id="))
       ?.split("=")[1];
-
+    console.log(userId);
     if (!userId) {
       router.push("/api/spotify/login");
       return;
