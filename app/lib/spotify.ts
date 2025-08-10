@@ -80,22 +80,6 @@ class Spotify {
     }
   }
 
-  public async getCurrentUserProfile(code: string) {
-    try {
-      const response = await fetch(`https://api.spotify.com/v1/me`, {
-        headers: {
-          Authorization: `Bearer ${code}`,
-        },
-      });
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error getting current user profile:", error);
-      throw error;
-    }
-  }
-
   public async createPlaylist(userId: string, playlistName: string) {
     try {
       const response = await fetch(
@@ -113,7 +97,8 @@ class Spotify {
         }
       );
 
-      const { id: playlistId } = await response.json();
+      const data = await response.json();
+      const playlistId = data.id;
       return playlistId;
     } catch (error) {
       console.error("Error creating playlist:", error);
@@ -121,7 +106,7 @@ class Spotify {
     }
   }
 
-  public async addItemsToPlaylist(playlistId: string, trackIds: string[]) {
+  public async addItemsToPlaylist(playlistId: string, tracks: TrackProps[]) {
     try {
       const response = await fetch(
         `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
@@ -132,13 +117,14 @@ class Spotify {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            uris: trackIds.map((id) => `spotify:track:${id}`),
+            uris: tracks.map((track) => `spotify:track:${track.id}`),
+            position: 0,
           }),
         }
       );
 
-      const data = await response.json();
-      return data;
+      const { snapshot_id } = await response.json();
+      return snapshot_id;
     } catch (error) {
       console.error("Error adding items to playlist:", error);
       throw error;

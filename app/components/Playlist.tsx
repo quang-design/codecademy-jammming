@@ -34,55 +34,61 @@ export default function Playlist({
     setIsEditing(false);
     if (setPlaylistName && h2Ref.current) {
       setPlaylistName(h2Ref.current.textContent || "");
+      localStorage.setItem("playlistName", h2Ref.current.textContent || "");
     }
+  }
+
+  function formatTrackIds(trackIds: string[]) {
+    return trackIds.map((id) => `spotify:track:${id}`);
   }
 
   async function savePlaylist() {
     console.log("Start saving playlist...");
+    const cookies = document.cookie;
 
-    // Debug: Log all cookies
-    console.log("All cookies:", document.cookie);
-
-    const accessToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("spotify_access_token="))
+    const accessToken = cookies
+      .split(";")
+      .find((cookie) => cookie.trim().startsWith("spotify_access_token="))
       ?.split("=")[1];
 
-    console.log("Raw access token:", accessToken);
-
-    // URL decode the token if it exists
-    const decodedToken = accessToken ? decodeURIComponent(accessToken) : null;
-    console.log("Decoded access token:", decodedToken);
-
-    if (!decodedToken) {
-      console.log("No access token found, redirecting to login");
+    if (!accessToken) {
       router.push("/api/spotify/login");
       return;
     }
-    try {
-      const response = await fetch("/api/spotify/playlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          playlistName: playlistName || "New Playlist",
-          trackIds: tracks.map((track) => track.id),
-        }),
-      });
 
-      const data = await response.json();
+    const userId = cookies
+      .split(";")
+      .find((cookie) => cookie.trim().startsWith("user_id="))
+      ?.split("=")[1];
 
-      console.log("Response:", data);
-
-      if (response.ok) {
-        console.log("Playlist saved successfully:", data.playlistId);
-      } else {
-        console.error("Failed to save playlist:", data.error);
-      }
-    } catch (error) {
-      console.error("Error saving playlist:", error);
+    if (!userId) {
+      router.push("/api/spotify/login");
+      return;
     }
+
+    const response = await fetch("/api/spotify/playlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        playlistName,
+        tracks,
+        accessToken,
+        userId,
+      }),
+    });
+
+    const { success, playlistId, snapshotId } = await response.json();
+
+    if (!success || !playlistId || !snapshotId) {
+      alert("Failed to save playlist");
+      return;
+    }
+
+    alert(
+      `Playlist saved successfully. Here's the link: https://open.spotify.com/playlist/${playlistId}?si=${snapshotId}`
+    );
   }
 
   return (

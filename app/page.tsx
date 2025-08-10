@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
 import SearchResult from "./components/SearchResult";
 import Playlist from "./components/Playlist";
@@ -11,14 +11,44 @@ export default function Home() {
   const [playlistTracks, setPlaylistTracks] = useState<TrackProps[]>([]);
   const [playlistName, setPlaylistName] = useState("");
 
+  // Load playlist data from localStorage on component mount
+  useEffect(() => {
+    const savedPlaylistName = localStorage.getItem("playlistName");
+    const savedPlaylistTracks = localStorage.getItem("playlistTracks");
+
+    if (savedPlaylistName) {
+      setPlaylistName(savedPlaylistName);
+    }
+
+    if (savedPlaylistTracks) {
+      try {
+        const parsedTracks = JSON.parse(savedPlaylistTracks);
+        setPlaylistTracks(parsedTracks);
+      } catch (error) {
+        console.error("Error parsing saved playlist tracks:", error);
+      }
+    }
+  }, []);
+
   const addTrack = (track: TrackProps) => {
     setSearchResults(searchResults.filter((t) => t.id !== track.id));
     setPlaylistTracks([...playlistTracks, track]);
+    localStorage.setItem(
+      "playlistTracks",
+      JSON.stringify([...playlistTracks, track])
+    );
   };
 
   const removeTrack = (track: TrackProps) => {
-    setPlaylistTracks(playlistTracks.filter((t) => t.id !== track.id));
+    const updatedPlaylistTracks = playlistTracks.filter(
+      (t) => t.id !== track.id
+    );
+    setPlaylistTracks(updatedPlaylistTracks);
     setSearchResults([...searchResults, track]);
+    localStorage.setItem(
+      "playlistTracks",
+      JSON.stringify(updatedPlaylistTracks)
+    );
   };
 
   const search = useCallback(async (term: string) => {
