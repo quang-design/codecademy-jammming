@@ -89,8 +89,7 @@ class Spotify {
       });
 
       const data = await response.json();
-      const userId = data.id;
-      return userId;
+      return data;
     } catch (error) {
       console.error("Error getting current user profile:", error);
       throw error;
