@@ -7,9 +7,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Missing code" }, { status: 400 });
   }
 
-  const user = await spotify.getCurrentUserProfile(code);
+  const userId = await spotify.getCurrentUserProfile(code);
 
-  if (!user) {
+  if (!userId) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     path: "/",
   });
 
-  response.cookies.set("user_id", user.id, {
+  response.cookies.set("user_id", userId, {
     httpOnly: true,
     // secure: process.env.NODE_ENV === "production",
     maxAge: 3600,
