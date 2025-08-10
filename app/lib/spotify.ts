@@ -1,13 +1,6 @@
 import { SearchContent, Track } from "spotify-types";
 import type { TrackProps } from "../components/Track";
 
-const generateRandomString = (length: number) => {
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const values = crypto.getRandomValues(new Uint8Array(length));
-  return values.reduce((acc, x) => acc + possible[x % possible.length], "");
-};
-
 class Spotify {
   private accessToken: string | null = null;
   private tokenExpirationTime: number | null = null;
@@ -15,6 +8,10 @@ class Spotify {
   private isTokenExpired() {
     if (!this.tokenExpirationTime) return true;
     return Date.now() > this.tokenExpirationTime;
+  }
+
+  public setAccessToken(accessToken: string) {
+    this.accessToken = accessToken;
   }
 
   public async getAccessToken() {
@@ -82,13 +79,11 @@ class Spotify {
     }
   }
 
-  public async getCurrentUserProfile() {
-    const accessToken = await this.getAccessToken();
-
+  public async getCurrentUserProfile(code: string) {
     try {
       const response = await fetch(`https://api.spotify.com/v1/me`, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${code}`,
         },
       });
 
@@ -96,6 +91,55 @@ class Spotify {
       return data;
     } catch (error) {
       console.error("Error getting current user profile:", error);
+      throw error;
+    }
+  }
+
+  public async createPlaylist(userId: string, playlistName: string) {
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/users/${userId}/playlists`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: playlistName,
+            public: false,
+          }),
+        }
+      );
+
+      const { id: playlistId } = await response.json();
+      return playlistId;
+    } catch (error) {
+      console.error("Error creating playlist:", error);
+      throw error;
+    }
+  }
+
+  public async addItemsToPlaylist(playlistId: string, trackIds: string[]) {
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uris: trackIds.map((id) => `spotify:track:${id}`),
+          }),
+        }
+      );
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error adding items to playlist:", error);
       throw error;
     }
   }
