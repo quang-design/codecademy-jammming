@@ -40,51 +40,53 @@ export default function Playlist({
 
   async function savePlaylist() {
     console.log("Start saving playlist...");
-    const cookies = document.cookie;
 
-    const accessToken = cookies
-      .split(";")
-      .find((cookie) => cookie.trim().startsWith("spotify_access_token="))
-      ?.split("=")[1];
-    console.log(accessToken);
-    if (!accessToken) {
-      router.push("/api/spotify/login");
+    if (!playlistName || playlistName.trim() === "") {
+      alert("Please enter a playlist name");
       return;
     }
 
-    const userId = cookies
-      .split(";")
-      .find((cookie) => cookie.trim().startsWith("user_id="))
-      ?.split("=")[1];
-    console.log(userId);
-    if (!userId) {
-      router.push("/api/spotify/login");
+    if (!tracks || tracks.length === 0) {
+      alert("Please add some tracks to your playlist");
       return;
     }
 
-    const response = await fetch("/api/spotify/playlist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        playlistName,
-        tracks,
-        accessToken,
-        userId,
-      }),
-    });
+    try {
+      const response = await fetch("/api/spotify/playlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          playlistName: playlistName.trim(),
+          tracks,
+        }),
+      });
 
-    const { success, playlistId, snapshotId } = await response.json();
+      const data = await response.json();
 
-    if (!success || !playlistId || !snapshotId) {
-      alert("Failed to save playlist");
-      return;
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Redirect to login if unauthorized
+          router.push("/api/spotify/login");
+          return;
+        }
+        alert(`Failed to save playlist: ${data.error || "Unknown error"}`);
+        return;
+      }
+
+      if (!data.success) {
+        alert(`Failed to save playlist: ${data.error || "Unknown error"}`);
+        return;
+      }
+
+      alert(
+        `Playlist saved successfully! View it here: https://open.spotify.com/playlist/${data.playlistId}`
+      );
+    } catch (error) {
+      console.error("Error saving playlist:", error);
+      alert("Failed to save playlist. Please try again.");
     }
-
-    alert(
-      `Playlist saved successfully. Here's the link: https://open.spotify.com/playlist/${playlistId}?si=${snapshotId}`
-    );
   }
 
   return (

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { redirect } from "next/navigation";
 
 export async function GET() {
   const generateRandomString = (length: number) => {
@@ -37,10 +36,9 @@ export async function GET() {
     );
   }
 
-  const scope = "user-read-private user-read-email";
+  const scope =
+    "user-read-private user-read-email playlist-modify-private playlist-modify-public";
   const authUrl = new URL("https://accounts.spotify.com/authorize");
-
-  // localStorage.setItem("code_verifier", codeVerifier);
 
   const params = {
     response_type: "code",
@@ -53,5 +51,13 @@ export async function GET() {
 
   authUrl.search = new URLSearchParams(params).toString();
 
-  redirect(authUrl.toString());
+  const response = NextResponse.redirect(authUrl.toString());
+  response.cookies.set("code_verifier", codeVerifier, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 600, // 10 minutes
+    path: "/",
+  });
+
+  return response;
 }
