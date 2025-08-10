@@ -39,7 +39,38 @@ export default function Playlist({
 
   async function savePlaylist() {
     console.log("Start saving playlist...");
-    router.push("/api/spotify/login");
+
+    const accessToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("spotify_access_token="))
+      ?.split("=")[1];
+
+    if (!accessToken) {
+      router.push("/api/spotify/login");
+      return;
+    }
+    try {
+      const response = await fetch("/api/spotify/playlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          playlistName: playlistName || "New Playlist",
+          trackIds: tracks.map((track) => track.id),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Playlist saved successfully:", data.playlistId);
+      } else {
+        console.error("Failed to save playlist:", data.error);
+      }
+    } catch (error) {
+      console.error("Error saving playlist:", error);
+    }
   }
 
   return (
