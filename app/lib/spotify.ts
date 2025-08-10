@@ -88,7 +88,7 @@ class Spotify {
         },
       });
 
-      const { data } = await response.json();
+      const data = await response.json();
       const userId = data.id;
       return userId;
     } catch (error) {
