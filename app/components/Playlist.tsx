@@ -38,10 +38,6 @@ export default function Playlist({
     }
   }
 
-  function formatTrackIds(trackIds: string[]) {
-    return trackIds.map((id) => `spotify:track:${id}`);
-  }
-
   async function savePlaylist() {
     console.log("Start saving playlist...");
     const cookies = document.cookie;
