@@ -4,9 +4,9 @@ https://codecademy-jammming-cyan.vercel.app/api/spotify/callback?code=AQClpNGIHI
 
 [x] save user playlist to localstorage -> reload still shown user playlist
 
-[ ] refactor save playlist to user's spotify account
+[x] refactor save playlist to user's spotify account
 
-- [ ] getCurrentUserProfile(code: string) => { id as user_id }
-- [ ] createPlaylist(name: string, desc?: string, user_id: string, public: boolean) => { id as playlist_id }
-- [ ] formatTrackIds(trackIds: string[]) => string[] ["spotify:track:id_1", "spotify:track:id_2", ...]
-- [ ] addItemsToPlaylist(playlist_id: string, track_ids: string[]) => void
+- [x] getCurrentUserProfile(code: string) => { id as user_id }
+- [x] createPlaylist(name: string, desc?: string, user_id: string, public: boolean) => { id as playlist_id }
+- [x] formatTrackIds(trackIds: string[]) => string[] ["spotify:track:id_1", "spotify:track:id_2", ...]
+- [x] addItemsToPlaylist(playlist_id: string, track_ids: string[]) => void
